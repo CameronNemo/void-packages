@@ -1,0 +1,28 @@
+# Template file for '389-ds-base'
+pkgname=389-ds-base
+version=1.4.0.15
+revision=1
+#wrksrc=
+#create_wrksrc=yes
+#only_for_archs="i686 x86_64"
+build_style=gnu-configure
+configure_args="--enable-autobind --with-openldap"
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+make_dirs="/var/log/389-ds-base 0755 root root
+/var/lib/389-ds-base 0755 root root"
+hostmakedepends="doxygen rsync icu automake autoconf libtool libltdl-devel"
+makedepends="nspr-devel nss-devel libdb pam-devel net-snmp-devel nspr-devel
+libldap-devel icu-devel pcre-devel cracklib-devel mit-krb5-devel"
+depends=""
+short_desc="389 Directory Server (base)"
+maintainer="Cameron Nemo <camerontnorman@gmail.com>"
+license="GPL-3.0-or-later"
+homepage="https://www.port389.org"
+distfiles="https://releases.pagure.org/${pkgname}/${pkgname}-${version}.tar.bz2"
+checksum=0989fdf59de8f7a22fd5f0d77cb5f5f6fc82d8a57cac272be7fcae40fb5150ae
+
+pre_configure() {
+	./autogen.sh
+}
