@@ -1,16 +1,18 @@
 # Template file for 'libical'
 pkgname=libical
 version=3.0.8
-revision=2
+revision=3
 build_style=cmake
 build_helper="gir"
 configure_args="-DICAL_BUILD_DOCS=false
- $(vopt_if gir '-DGOBJECT_INTROSPECTION=true -DICAL_GLIB_VAPI=true')"
-hostmakedepends="gettext libglib-devel libxml2-devel perl pkg-config $(vopt_if gir vala)"
-makedepends="libglib-devel libxml2-devel $(vopt_if gir vala-devel)"
+ -DGOBJECT_INTROSPECTION=$(vopt_if gir true false)
+ -DICAL_GLIB_VAPI=$(vopt_if vala true false)"
+hostmakedepends="gettext libglib-devel libxml2-devel perl pkg-config
+ $(vopt_if gir gobject-introspection) $(vopt_if vala vala)"
+makedepends="libglib-devel libxml2-devel"
 checkdepends="tzdata"
 short_desc="Reference implementation of the iCalendar data type and format"
-maintainer="Orphaned <orphan@voidlinux.org>"
+maintainer="Cameron Nemo <cnemo@tutanota.com>"
 license="LGPL-2.1-only, MPL-2.0"
 homepage="http://libical.github.io/libical/"
 distfiles="https://github.com/${pkgname}/${pkgname}/archive/v${version}.tar.gz"
@@ -18,10 +20,8 @@ checksum=09fecacaf75ba5a242159e3a9758a5446b5ce4d0ab684f98a7040864e1d1286f
 patch_args="-Np1"
 disable_parallel_build=yes
 
-build_options="gir"
-if [ -z "$CROSS_BUILD" ]; then
-	build_options_default="gir"
-fi
+build_options="gir vala"
+build_options_default="gir vala"
 
 libical-devel_package() {
 	depends="icu-devel ${sourcepkg}>=${version}_${revision}"
@@ -33,6 +33,8 @@ libical-devel_package() {
 		vmove usr/lib/*.so
 		if [ "$build_option_gir" ]; then
 			vmove usr/share/gir-1.0
+		fi
+		if [ "$build_option_vala" ]; then
 			vmove usr/share/vala
 		fi
 		vmove usr/lib/cmake
