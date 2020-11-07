@@ -1,0 +1,15 @@
+--- CMakeLists.txt.orig	2020-11-07 17:04:53.528722547 +0000
++++ CMakeLists.txt	2020-11-07 17:06:59.445484070 +0000
+@@ -23,7 +23,11 @@
+                             "and building libsystemd in as part of sdbus-c++ during configuration)")
+     endif()
+     add_library(Systemd::Libsystemd ALIAS PkgConfig::Systemd)
+-    set(LIBSYSTEMD_VERSION ${Systemd_VERSION})
++    # Avoid float versioning for libsystemd/libelogind
++    string(REPLACE "." ";" Systemd_VERSION_LIST ${Systemd_VERSION})
++    list(GET Systemd_VERSION_LIST 0 Systemd_VERSION_MAJOR)
++    message(STATUS "Found lib${Systemd_LIBRARIES} version ${Systemd_VERSION_MAJOR}")
++    set(LIBSYSTEMD_VERSION ${Systemd_VERSION_MAJOR})
+ else()
+     # Build static libsystemd library as an external project
+     include(cmake/LibsystemdExternalProject.cmake)

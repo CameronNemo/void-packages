@@ -1,0 +1,34 @@
+# Template file for 'sdbus-cpp'
+pkgname=sdbus-cpp
+version=0.8.3
+revision=1
+build_style=cmake
+configure_args="-DBUILD_CODE_GEN=ON"
+hostmakedepends="pkg-config"
+makedepends="elogind-devel expat-devel"
+short_desc="High-level C++ D-Bus library for Linux based on sd-bus"
+maintainer="Cameron Nemo <cnemo@tutanota.com>"
+license="LGPL-2.1-or-later"
+homepage="https://github.com/Kistler-Group/sdbus-cpp"
+distfiles="https://github.com/Kistler-Group/sdbus-cpp/archive/v${version}.tar.gz"
+checksum=0fd575ae0f463773dd9141242d1133731e2b780fd6526650ce992ba711d88628
+
+sdbus-cpp-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/cmake
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share
+	}
+}
+
+sdbus-cpp-xml2cpp_package() {
+	shor_desc+=" - xml2cpp tool"
+	pkg_install() {
+		vmove usr/bin/sdbus-c++-xml2cpp
+	}
+}
+
