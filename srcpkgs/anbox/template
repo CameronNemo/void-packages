@@ -1,0 +1,37 @@
+# Template file for 'anbox'
+pkgname=anbox
+_ref=7f1bfaf90de1f808d4ce8f49ef050120c5c8d1ef
+version=0.0.0.20201108
+revision=1
+wrksrc="anbox-${_ref}"
+build_style=cmake
+configure_args="-DCMAKE_BUILD_TYPE=None -DANBOX_VERSION=${version}_${revision}
+ -DWerror=OFF"
+hostmakedepends="pkg-config protobuf python3 sdbus-cpp-xml2cpp"
+makedepends="lxc-devel libcap-devel elogind-devel gtest-devel
+ libEGL libGLES SDL2-devel SDL2_image-devel protobuf-devel boost-devel
+ libdwarf-devel binutils-devel elfutils-devel cpputest
+ sdbus-cpp-devel glm properties-cpp cpu_features"
+depends=""
+short_desc="LXC based container manager for Android applications"
+maintainer="Cameron Nemo <cnemo@tutanota.com>"
+license="GPL-3.0-or-later"
+homepage="https://anbox.io/"
+distfiles="https://github.com/anbox/anbox/archive/${_ref}.tar.gz"
+checksum=9b52fdcb780e715303059848abfd6cc7830c503b47a0328c6edf30c3a31a95b9
+
+if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+	makedepends+=" libexecinfo-devel"
+	configure_args+=" -DMUSL_LIBS=execinfo"
+fi
+
+post_install() {
+	rm -f -- "${DESTDIR}/usr/cmake/backward" "${DESTDIR}/usr/include/backward.hpp"
+	vinstall snap/gui/icon.png 0644 usr/share/icons/hicolor/512x512 anbox.png
+	for _scr in bridge shell; do
+		vinstall "scripts/anbox-${_scr}.sh" 0755 usr/share/anbox
+	done
+	vinstall "${FILESDIR}/anbox-launch.sh" 0755 usr/bin anbox-launch
+	vinstall "${FILESDIR}/anbox.desktop" 0755 usr/share/applications
+	vsv anbox-container-manager
+}

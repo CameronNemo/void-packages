@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if ! ip link show anbox0 >/dev/null 2>&1; then
+	/usr/share/anbox/anbox-bridge.sh start
+fi
+
+exec anbox container-manager --privileged \
+	--data-path=/var/lib/anbox --android-image=/usr/share/anbox/android.img
