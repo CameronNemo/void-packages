@@ -1,0 +1,46 @@
+--- scripts/build.orig	2020-11-21 16:41:58.125482162 -0800
++++ scripts/build	2020-11-21 16:54:56.004231605 -0800
+@@ -33,8 +33,7 @@
+     -X ${VENDOR_PREFIX}${PKG_CONTAINERD}/version.Package=${PKG_RANCHER_CONTAINERD}
+     -X ${VENDOR_PREFIX}${PKG_CRICTL}/pkg/version.Version=${VERSION_CRICTL}
+ "
+-LDFLAGS="
+-    -w -s"
++LDFLAGS=""
+ STATIC="
+     -extldflags '-static'
+ "
+@@ -83,7 +82,7 @@
+ 
+ cleanup() {
+     exit_status=$?
+-    rm -rf $TMPDIR
++    go clean -modcache
+     exit ${exit_status}
+ }
+ 
+@@ -93,10 +92,10 @@
+     echo Building cni
+     TMPDIR=$(mktemp -d)
+     trap cleanup EXIT
+-    WORKDIR=$TMPDIR/src/github.com/containernetworking/plugins
+-    git clone -b $VERSION_CNIPLUGINS https://github.com/rancher/plugins.git $WORKDIR
+-    cd $WORKDIR
+-    GOPATH=$TMPDIR CGO_ENABLED=0 "${GO}" build -tags "$TAGS" -ldflags "$LDFLAGS $STATIC" -o $INSTALLBIN/cni
++    SRCDIR=
++    cd "../plugins-${VERSION_CNIPLUGINS#v}"
++    [ -r go.mod ] || "${GO}" mod init github.com/containernetworking/plugins
++    CGO_ENABLED=0 "${GO}" build -mod=vendor -tags "$TAGS" -ldflags "$LDFLAGS $STATIC" -o $INSTALLBIN/cni
+ )
+ fi
+ # echo Building agent
+@@ -116,7 +115,7 @@
+ # CGO_ENABLED=0 "${GO}" build -tags "$TAGS" -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC" -o bin/containerd ./cmd/containerd/
+ echo Building runc
+ rm -f ./vendor/github.com/opencontainers/runc/runc
+-make EXTRA_LDFLAGS="-w -s" BUILDTAGS="$RUNC_TAGS" -C ./vendor/github.com/opencontainers/runc $RUNC_STATIC
++make EXTRA_LDFLAGS="" BUILDTAGS="$RUNC_TAGS" -C ./vendor/github.com/opencontainers/runc $RUNC_STATIC
+ cp -f ./vendor/github.com/opencontainers/runc/runc ./bin/runc
+ 
+ echo Building containerd-shim
+
