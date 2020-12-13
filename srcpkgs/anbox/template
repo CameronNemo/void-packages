@@ -1,7 +1,7 @@
 # Template file for 'anbox'
 pkgname=anbox
-_ref=7f1bfaf90de1f808d4ce8f49ef050120c5c8d1ef
-version=0.0.0.20201108
+_ref=6c10125a7f13908d2cbe56d2d9ab09872755f265
+version=0.0.0.20201212
 revision=1
 wrksrc="anbox-${_ref}"
 build_style=cmake
@@ -18,7 +18,7 @@ maintainer="Cameron Nemo <cnemo@tutanota.com>"
 license="GPL-3.0-or-later"
 homepage="https://anbox.io/"
 distfiles="https://github.com/anbox/anbox/archive/${_ref}.tar.gz"
-checksum=9b52fdcb780e715303059848abfd6cc7830c503b47a0328c6edf30c3a31a95b9
+checksum=abe4f34fae13056c212e864e067b1669ec239199cc79f6406830001dd7bd2ba2
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
