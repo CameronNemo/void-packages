@@ -1,0 +1,23 @@
+# Template file for 'containers.dnsname'
+pkgname=containers.dnsname
+version=1.1.1
+revision=1
+wrksrc="dnsname-$version"
+build_style=go
+go_import_path=github.com/containers/dnsname
+go_package="${go_import_path}/plugins/meta/dnsname"
+hostmakedepends="pkg-config go-md2man"
+depends="dnsmasq"
+short_desc="CNI plugin to achieve name resolution of containers"
+maintainer="Cameron Nemo <cnemo@tutanota.com>"
+license="Apache-2.0"
+homepage="https://github.com/containers/dnsname"
+changelog="https://github.com/containers/dnsname/blob/master/RELEASE_NOTES.md"
+distfiles="https://github.com/containers/dnsname/archive/v${version}.tar.gz"
+checksum=e8c7b0d4bab5d2559e50fe4a9947f2addd28cdaddd6b2909cddc350c85761f41
+
+do_install() {
+	vinstall "${GOPATH}/bin/dnsname" 0755 usr/libexec/cni
+	vdoc README.md
+	vdoc README_PODMAN.md
+}
