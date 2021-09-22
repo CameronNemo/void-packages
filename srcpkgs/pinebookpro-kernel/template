@@ -1,6 +1,6 @@
 # Template file for 'pinebookpro-kernel'
 pkgname=pinebookpro-kernel
-version=5.14.0
+version=5.14.6
 revision=1
 archs="aarch64*"
 wrksrc="linux-${version%.*}"
@@ -8,8 +8,11 @@ short_desc="Linux kernel for Pinebook Pro"
 maintainer="Renato Aguiar <renato@renatoaguiar.net>"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
-distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version%.*}.tar.xz"
-checksum=7e068b5e0d26a62b10e5320b25dce57588cbbc6f781c090442138c9c9c3271b2
+distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version%.*}.tar.xz
+ https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-${version}.xz"
+checksum="7e068b5e0d26a62b10e5320b25dce57588cbbc6f781c090442138c9c9c3271b2
+ 1149f28bdb4ffe49c99bfd2ef73e379c2e64b56579a13227c47a0cd02c8767d7"
+skip_extraction="patch-${version}.xz"
 python_version=3
 
 nodebug=yes  # -dbg package is generated below manually
@@ -46,6 +49,10 @@ export KBUILD_BUILD_HOST=voidlinux
 if [ "$CROSS_BUILD" ]; then
 	_cross="CROSS_COMPILE=${XBPS_CROSS_TRIPLET}-"
 fi
+
+pre_patch() {
+	xzcat $XBPS_SRCDISTDIR/$pkgname-$version/patch-${version}.xz | patch -Np1
+}
 
 do_configure() {
 	local arch
